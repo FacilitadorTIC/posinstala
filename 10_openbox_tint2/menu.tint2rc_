@@ -1,7 +1,7 @@
----------------------------------------------
+------------------------------------------------
 # TINT2 MENU
-#---------------------------------------------
-# Autor: Leonardo Marco
+#-----------------------------------------------
+# Autor: Leo Marco | Modificada en este proyecto
 
 
 # Backgrounds
@@ -49,10 +49,10 @@ panel_window_name = launcher
 
 
 #---------------------------------------------
-# EXECUTOR
+# EJECUTOR
 #---------------------------------------------
 execp = new
-execp_command = echo "Run"
+execp_command = echo "Ejecutar"
 execp_interval = 0
 execp_background_id = 2
 execp_font = Droid Sans 11
@@ -74,7 +74,7 @@ execp_tooltip =
 execp_lclick_command = x-terminal-emulator 
 
 execp = new
-execp_command = echo "Web Browser"
+execp_command = echo "Navegador Web"
 execp_interval = 0
 execp_background_id = 2
 execp_font = Droid Sans 11
@@ -85,7 +85,7 @@ execp_tooltip =
 execp_lclick_command = x-www-browser
 
 execp = new
-execp_command = echo "File Manager"
+execp_command = echo "Administrador de Archivos"
 execp_interval = 0
 execp_background_id = 2
 execp_font = Droid Sans 11
@@ -96,7 +96,7 @@ execp_tooltip =
 execp_lclick_command = x-file-manager 
 
 execp = new
-execp_command = echo "Text editor"
+execp_command = echo "Editor de Textos"
 execp_interval = 0
 execp_background_id = 2
 execp_font = Droid Sans 11

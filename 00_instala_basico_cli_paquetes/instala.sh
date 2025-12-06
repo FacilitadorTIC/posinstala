@@ -4,7 +4,7 @@
 # DEFAULT: y
 
 # Chequea root
-[ "$(id -u)" -ne 0 ] && { echo "Debe ser root" 1>&2; exit 1; }
+[ "$(id -u)" -ne 0 ] && { echo "Ejecutar como root" 1>&2; exit 1; }
 
 # Instala paquetes...
 echo -e "\e[1mInstalling packages...\e[0m"

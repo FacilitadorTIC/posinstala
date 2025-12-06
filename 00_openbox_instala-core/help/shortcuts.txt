@@ -9,7 +9,7 @@
     Win+L			Lock Screen
     Win+x			Logout Menu
 
-DESKTOP 
+ESCRITORIO 
     Ctrl+Alt+Backspace		Kill X and go back to login
     Win+F1			Go to Desktop 1
     Win+F2			Go to Desktop 2

@@ -7,7 +7,7 @@
 
 
     <menu id="root-menu" label="Openbox 3">
-		<item label="Run Program" icon="/usr/share/icons/openbox-menu/search.png">
+		<item label="Ejecutar Programa" icon="/usr/share/icons/openbox-menu/search.png">
 			<action name="Execute">
 				<command>rofi -show drun</command>
 			</action>
