@@ -6,7 +6,7 @@
 
 configuration {
 	modi: "drun";	
-	display-drun: "Search";
+	display-drun: "Buscar";
  }
 
 * {
