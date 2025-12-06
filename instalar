@@ -3,7 +3,7 @@
 # SCRIPTS DE INSTALACIÓN
 # ARCHIVO: instalar
 # DESCRIPCIÓN: 	Automatizar la instalación de un conjunto de scripts
-# 				Buscar todos los scripts install.sh en subdirectorios, listarlos todos y
+# 				Buscar todos los scripts instalar.sh en subdirectorios, listarlos todos y
 #				ejecutar los scripts seleccionados
 # VERSIÓN: 1.0
 # LICENCIA: GNU General Public License v3.0 - Créditos a quién corresponda (BunsenLabs/LeoMarco)
@@ -253,7 +253,7 @@ sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" | tail -n +2 | grep $([ "$a" = "${a,,}" ]&& ech
 
 #=== FUNCIÓN ======================================================================
 # NOMBRE: load_scripts
-# DESCRIPCIÓN: cargar todos los scripts install.sh encontrados y poblar los arrays scripts_XXX
+# DESCRIPCIÓN: cargar todos los scripts instalar.sh encontrados y poblar los arrays scripts_XXX
 #
 # VARIABLES GLOBALES ESCRITAS
 #	script_paths[]
@@ -265,7 +265,7 @@ sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" | tail -n +2 | grep $([ "$a" = "${a,,}" ]&& ech
 function load_scripts() {
 	local IFS=$'\n\t'
 	local naction=1
-	local scripts_paths="$(find "$base_dir" -maxdepth 2 -type f -name install.sh | sort -n)"
+	local scripts_paths="$(find "$base_dir" -maxdepth 2 -type f -name instalar.sh | sort -n)"
 
 	for script in $scripts_paths; do
 		local head="$(head -10 "$script")"
