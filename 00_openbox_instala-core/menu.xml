@@ -348,7 +348,7 @@
         </menu>
 		
         <menu id="info" label="System info" icon="/usr/share/icons/openbox-menu/stats.png">
-            <separator label="SYSTEM INFO TOOLS" />
+            <separator label="INFO DEL SISTEMA" />
             
 			<item label="System Info Panel">
 				<action name="Execute">
