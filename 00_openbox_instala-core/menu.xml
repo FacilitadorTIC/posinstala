@@ -452,7 +452,7 @@
 		
         <separator/>
 
-        <item label="Exit" icon="/usr/share/icons/openbox-menu/exit.png">
+        <item label="Salir" icon="/usr/share/icons/openbox-menu/exit.png">
             <action name="Execute">
                 <command>
                     obexit show
