@@ -2,7 +2,7 @@
 Version=1.0
 Name=Hibernate
 Type=Application
-Comment=Hibernate system
+Comment=Hibernar system
 Terminal=true
 Exec=systemctl hibernate
 Icon=suspend

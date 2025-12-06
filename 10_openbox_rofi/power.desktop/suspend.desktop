@@ -2,7 +2,7 @@
 Version=1.0
 Name=Suspend
 Type=Application
-Comment=Suspend system
+Comment=Suspender system
 Terminal=true
 Exec=systemctl suspend
 Icon=suspend

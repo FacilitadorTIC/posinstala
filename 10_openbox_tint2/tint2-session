@@ -43,6 +43,6 @@ case "${1,,}" in
 		stop	
 	;;
 	*)	
-		echo "Usage: tint2-session [start|stop|restart]"
+		echo "Usar: tint2-session [start|stop|restart]"
 	;;
 esac

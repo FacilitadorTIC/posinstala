@@ -2,7 +2,7 @@
 Version=1.0
 Name=Lock Session
 Type=Application
-Comment=Locl Session
+Comment=Bloquear
 Terminal=true
 Exec=x-locker
 Icon=lock
