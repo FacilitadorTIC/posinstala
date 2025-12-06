@@ -82,15 +82,15 @@ function stderr_red() {
 # DESCRIPCIÓN: Mostrar ayuda del comando
 #===================================================================================
 function help() {
-	echo -e "Exec a set of scripts
-Usage: $(basename $0) [-l] [-a <actions>] [-y] [-d] [-h]
+	echo -e "Executa un set de scripts
+Usar: $(basename $0) [-l] [-a <actions>] [-y] [-d] [-h]
    ${S_B}-l${S_R}\t\tOnly list actions 
    ${S_B}-a <actions>${S_R}\tFilter selected actions by number range or text pattern (comma separated)
    ${S_B}-y${S_R}\t\tAuto-answer yes to all actions
    ${S_B}-d${S_R}\t\tAuto-answer default to all actions
    ${S_B}-h${S_R}\t\tShow this help
 
- Samples:
+ Ejemplos:
    ${S_B}install${S_R}\t\tExec all actions asking if install or not
    ${S_B}install -l${S_R}\t\tList all actions
    ${S_B}install -l -a grub${S_R}\tList all actions with text text in description
