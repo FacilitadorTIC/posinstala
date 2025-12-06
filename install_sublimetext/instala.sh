@@ -1,25 +1,22 @@
 #!/bin/bash
-# ACTION: Install Sublime Text, add repositories and set as default editor
-# INFO: Sublime Text is propietary and multiplataform text editor, very fast and beautiful, that supports many programming and markup languages
+# ACTION: Install Pluma and set as default editor for Openbox
+# INFO: Pluma is a lightweight text editor from the MATE project
 # DEFAULT: y
 
 # Check root
-[ "$(id -u)" -ne 0 ] && { echo "Must run as root" 1>&2; exit 1; }
+[ "$(id -u)" -ne 0 ] && { echo "Ejecutar como root" 1>&2; exit 1; }
 
-# Install repositories and update
-if ! grep -R "download.sublimetext.com" /etc/apt/ &> /dev/null; then
-	echo -e "\e[1mConfiguring repositories...\e[0m"
-	wget -qO - "https://download.sublimetext.com/sublimehq-pub.gpg" | gpg --dearmor --yes -o /usr/share/keyrings/sublimetext-keyring.gpg
-	echo "deb [arch=amd64 signed-by=/usr/share/keyrings/sublimetext-keyring.gpg] https://download.sublimetext.com/ apt/stable/" | tee /etc/apt/sources.list.d/sublimetext.list
-	apt-get update
-fi
-
-# Install package
-echo -e "\e[1mInstalling packages...\e[0m"
-apt-get install sublime-text || exit 1
+echo -e "\e[1mInstalando Pluma...\e[0m"
+apt-get update
+apt-get install -y pluma || exit 1
 
 # Set as default
-echo -e "\e[1mSetting as default alternative...\e[0m"
-update-alternatives --install /usr/bin/x-text-editor x-text-editor /usr/bin/subl 90 && \
-update-alternatives --set x-text-editor /usr/bin/subl
+echo -e "\e[1mConfigurando Pluma como la alternativa por defecto...\e[0m"
 
+# Register pluma in update-alternatives (if not already)
+update-alternatives --install /usr/bin/x-text-editor x-text-editor /usr/bin/pluma 90
+
+# Select pluma as the default editor
+update-alternatives --set x-text-editor /usr/bin/pluma
+
+echo -e "\e[1mDone. Pluma is now your default GUI text editor.\e[0m"
