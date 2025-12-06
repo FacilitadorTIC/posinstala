@@ -13,7 +13,7 @@
 			</action>
 		</item> 
 
-		<separator/> <item label="VirtualBox" icon="/usr/share/icons/openbox-menu/virtualbox.png"><action name="Execute"><command>virtualbox</command></action></item> 
+		<separator/> <!-- <item label="VirtualBox" icon="/usr/share/icons/openbox-menu/virtualbox.png"><action name="Execute"><command>virtualbox</command></action></item> -->
 		
 		<item label="Terminal" icon="/usr/share/icons/openbox-menu/terminal.png">
             <action name="Execute">
@@ -44,13 +44,13 @@
             </action>
         </item>
 
-        <menu id="desktop-app-menu" label="Applications" icon="/usr/share/icons/openbox-menu/applications.png" execute="obamenu" />
+        <menu id="desktop-app-menu" label="Aplicaciones" icon="/usr/share/icons/openbox-menu/applications.png" execute="obamenu" />
 		
         <separator/>
 
 
-        <menu id="preferences" label="Preferences" icon="/usr/share/icons/openbox-menu/settings.png">
-        	<separator label="GRAPHICAL PREFERENCES"/>
+        <menu id="preferences" label="Preferencias" icon="/usr/share/icons/openbox-menu/settings.png">
+        	<separator label="PREFERENCIAS GRÁFICAS"/>
 
             <menu id="obConfig" label="Desktop" icon="/usr/share/icons/openbox-menu/openbox.png">	
 	            <item label="Openbox Preferences" icon="/usr/share/icons/openbox-menu/openbox.png">
@@ -121,7 +121,7 @@
 	                </action>
 	            </item>
 	            <separator/>
-				<item label="Restart" icon="/usr/share/icons/openbox-menu/restart.png">
+				<item label="Reiniciar" icon="/usr/share/icons/openbox-menu/restart.png">
 					<action name="Execute">
 						<command>
 							bash -c 'killall compton; compton'
@@ -402,7 +402,7 @@
         </menu>
 
         <menu id="help" label="Help" icon="/usr/share/icons/openbox-menu/help.png">
-        	<separator label="HELP AND TIPS" />
+        	<separator label="AYUDA" />
 	        <item label="Debian-Openbox Script GitHub" icon="/usr/share/icons/openbox-menu/github.png">
 	            <action name="Execute">
 	                <command>
@@ -425,7 +425,7 @@
 	            </action>
 	        </item>		
 			
-	        <separator label="DEBIAN HELP" />
+	        <separator label="DEBIAN GNU/LINUX" />
 
 	        <item label="Debian Documentatcion" icon="/usr/share/icons/openbox-menu/debian.png">
 	            <action name="Execute">
