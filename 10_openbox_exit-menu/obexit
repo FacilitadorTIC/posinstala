@@ -1,0 +1,45 @@
+#!/bin/bash
+#===================================================================================
+# OPENBOX EXIT MENU
+# FILE: obexit
+#
+# DESCRIPTION: Show a exit menu based on rofi launcher. Use UTF8 symbols as icons.
+#
+# LICENSE: GNU General Public License v3.0
+#===================================================================================
+
+options=" ⏻\tApagar
+ 🗘\tReiniciar
+ ⏸\tSuspender
+ ⏾\tHibernar
+ 🗙\tCerrar sesión
+ 🗝 \tBloquear"
+
+if [ $# -eq 0 ]; then
+    echo -e "$options"
+
+elif [ "$1" = "show" ]; then
+    rofi -theme openbox-menu -show Action -modi "Action:$(readlink -f "$0")" -no-fixed-num-lines
+
+else
+    case "$@" in
+    *"Cerrar sesión")
+        openbox --exit
+        ;;
+    *"Bloquear")
+        x-locker
+        ;;
+    *"Apagar")
+        systemctl poweroff
+        ;;
+    *"Reiniciar")
+        systemctl reboot
+        ;;
+    *"Suspender")
+        systemctl suspend
+        ;;
+    *"Hibernar")
+        systemctl hibernate
+        ;;
+    esac
+fi
