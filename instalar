@@ -1,12 +1,12 @@
 #!/bin/bash
 #===================================================================================
 # SCRIPTS DE INSTALACIÓN
-# ARCHIVO: install
+# ARCHIVO: instalar
 # DESCRIPCIÓN: 	Automatizar la instalación de un conjunto de scripts
 # 				Buscar todos los scripts install.sh en subdirectorios, listarlos todos y
 #				ejecutar los scripts seleccionados
 # VERSIÓN: 1.0
-# LICENCIA: GNU General Public License v3.0
+# LICENCIA: GNU General Public License v3.0 - Créditos a quién corresponda (BunsenLabs/LeoMarco)
 #===================================================================================
 
 #=== CONFIGURACIÓN GLOBAL ==========================================================
