@@ -1,0 +1,384 @@
+#!/bin/bash
+#===================================================================================
+# SCRIPTS DE INSTALACIÓN
+# ARCHIVO: install
+# DESCRIPCIÓN: 	Automatizar la instalación de un conjunto de scripts
+# 				Buscar todos los scripts install.sh en subdirectorios, listarlos todos y
+#				ejecutar los scripts seleccionados
+# VERSIÓN: 1.0
+# LICENCIA: GNU General Public License v3.0
+#===================================================================================
+
+#=== CONFIGURACIÓN GLOBAL ==========================================================
+show_type=1																# Mostrar categorías en la lista
+base_dir="$(dirname "$(readlink -f "$0")")"								# Ruta del script de instalación
+shopt -s extglob														# Activar expansiones extendidas de Bash
+shopt -s checkwinsize													# Para que $COLUMNS y $LINES funcionen
+echo "$PATH" | grep -q sbin || export PATH="/sbin/:/usr/sbin:$PATH"		# PATH con sbin
+
+
+#=== VARIABLES GLOBALES ============================================================
+unset actions_sel														# Array con las acciones seleccionadas ya expandidas
+unset list 																# No vacío si se está en modo lista (sin ejecutar acciones)
+unset nscripts															# Número de scripts cargados
+unset script_actions													# Array con descripciones de scripts
+unset script_infos														# Array con información de scripts
+unset script_defaults													# Array con valores por defecto de scripts
+unset script_paths 														# Array con rutas de scripts
+
+
+#===============================================================================
+#  COLORES Y FORMATO
+#===============================================================================
+S_R="\e[0m"            	# Restablecer todos los atributos
+S_B="\e[1m"             # Estilo NEGRITA
+S_D="\e[2m"             # Estilo TENUE
+S_U="\e[4m"            	# Estilo SUBRAYADO
+S_I="\e[7m"             # Estilo INVERTIDO
+C_D="\e[39m"            # Color POR DEFECTO
+C_R="\e[31m"            # Color ROJO
+C_BR="\e[1m\e[31m"      # Color ROJO NEGRITA
+C_LR="\e[91m"           # Color ROJO CLARO
+C_G="\e[32m"            # Color VERDE
+C_BG="\e[1m\e[32m"      # Color VERDE NEGRITA
+C_LG="\e[92m"           # Color VERDE CLARO
+C_Y="\e[33m"            # Color AMARILLO
+C_BY="\e[1m\e[33m"      # Color AMARILLO NEGRITA
+C_LY="\e[93m"           # Color AMARILLO CLARO
+C_B="\e[34m"            # Color AZUL
+C_BB="\e[1m\e[34m"      # Color AZUL NEGRITA
+C_LB="\e[94m"           # Color AZUL CLARO
+C_M="\e[35m"            # Color MAGENTA
+C_BM="\e[1m\e[35m"      # Color MAGENTA NEGRITA
+C_LM="\e[95m"           # Color MAGENTA CLARO
+C_C="\e[36m"            # Color CIAN
+C_BC="\e[1m\e[36m"      # Color CIAN NEGRITA
+C_LC="\e[96m"           # Color CIAN CLARO
+C_N="\e[90m"            # Color GRIS
+C_LN="\e[37m"           # Color GRIS CLARO
+
+
+#=== FUNCIÓN =======================================================================
+# NOMBRE: stderr_red
+# DESCRIPCIÓN: Mostrar stderr en color rojo permanentemente
+#===================================================================================
+function stderr_red() {
+	exec 9>&2
+	exec 8> >(
+	    while IFS='' read -r line || [ -n "$line" ]; do
+	       echo -e "\033[31m${line}\033[0m"
+	    done
+	)
+	function undirect(){ exec 2>&9; }
+	function redirect(){ exec 2>&8; }
+	trap "redirect;" DEBUG
+	PROMPT_COMMAND='undirect;'
+}
+
+
+
+#=== FUNCIÓN =======================================================================
+# NOMBRE: help
+# DESCRIPCIÓN: Mostrar ayuda del comando
+#===================================================================================
+function help() {
+	echo -e "Exec a set of scripts
+Usage: $(basename $0) [-l] [-a <actions>] [-y] [-d] [-h]
+   ${S_B}-l${S_R}\t\tOnly list actions 
+   ${S_B}-a <actions>${S_R}\tFilter selected actions by number range or text pattern (comma separated)
+   ${S_B}-y${S_R}\t\tAuto-answer yes to all actions
+   ${S_B}-d${S_R}\t\tAuto-answer default to all actions
+   ${S_B}-h${S_R}\t\tShow this help
+
+ Samples:
+   ${S_B}install${S_R}\t\tExec all actions asking if install or not
+   ${S_B}install -l${S_R}\t\tList all actions
+   ${S_B}install -l -a grub${S_R}\tList all actions with text text in description
+   ${S_B}install -l -a \"(N)\"${S_R}\tList all actions with text (N) in description
+   ${S_B}install -a 1-5,12${S_R}\tExec actions 1 to 5 and 12
+   ${S_B}install -a grub${S_R}\tExec actions with grub text in description
+   ${S_B}install -d${S_R}\t\tExec all actions with Y has default answer (no ask)
+   ${S_B}install -y${S_R}\t\tExec all actions (no ask)"
+}
+
+
+
+
+#=== FUNCIÓN ======================================================================
+# NOMBRE: imprimir tipo de acción según el nombre del directorio
+# EJEMPLOS:
+# 	install_tint2-script 		-> install (primer campo separado por _)
+# 	10_install_tint2-script 	-> install (si el primer campo es un número, usar el segundo)
+# 	tint2-script 				-> vacío (si no hay campos)
+# PARÁMETROS
+#	$1 nombre del directorio
+#===================================================================================
+function get_action_type() {
+	local dirname="$1"
+	# Sin tipo (sin carácter _ en el nombre del directorio)
+	echo "$dirname" | grep -q "_" || return
+	
+	type="$(echo "$dirname" | cut -f1 -d "_")"
+	[ "$type" -eq "$type" ] &>/dev/null && type="$(echo "$dirname" | cut -f2 -d "_")"
+	echo "$type"
+}
+
+
+
+#=== FUNCIÓN ======================================================================
+# NOMBRE: list_actions
+# DESCRIPCIÓN: mostrar lista de todos los scripts cargados y seleccionados, o todos si $1=all
+#
+# PARÁMETROS
+#	[$1]	all o vacío
+#
+# VARIABLES GLOBALES LEÍDAS
+#	script_paths[]
+#	script_actions[]
+#	script_infos[]
+#	script_defaults[]
+#===================================================================================
+function list_actions() {
+	[ "$1" = "all" ] && local actions="$(seq -s" " 1 $nscripts)" || local actions="${!actions_sel[*]}"
+	local naction
+	local IFS=" "
+	# Mostrar cabecera
+	echo -e "${S_B} NUM$([ "$show_type" != "0" ] && echo -e "\tTYPE")\tDESCRIPTION${S_R}"
+	seq -s"=" 1 $([ "$COLUMNS" -gt 120 ] && echo 120 || echo $COLUMNS) | tr -d "[0-9]"
+	# Mostrar lista
+	for naction in $actions; do
+		local path="${script_paths[$naction]}"
+		local action="${script_actions[$naction]}"
+		local info="${script_infos[$naction]}"
+		local default="${script_defaults[$naction]^^}"		
+		[ "$show_type" != "0" ] && local type="$(get_action_type "$(basename "$(dirname "$path")")")"
+		
+		echo -e " [${S_B}$naction${S_R}]\t${S_D}${type^^}${S_R}\t$action ($default)"
+	done | column -t -s $'\t'
+}
+
+
+
+#=== FUNCIÓN ======================================================================
+# NOMBRE: exec_actions
+# DESCRIPCIÓN: ejecutar todas las acciones seleccionadas y preguntar si ejecutar o no
+#
+# VARIABLES GLOBALES LEÍDAS
+#	script_paths[]
+#	script_actions[]
+#	script_infos[]
+#	script_defaults[]
+#===================================================================================
+function exec_actions() {
+	shopt -s checkwinsize
+
+	local IFS=" "
+	local naction
+	for naction in ${!actions_sel[*]}; do
+		local path="${script_paths[$naction]}"
+		local action="${script_actions[$naction]}"
+		local info="${script_infos[$naction]}"
+		local default="${script_defaults[$naction],,}"		
+		[ "$show_categories" != "0" ] && local type="$(get_action_type "$(basename "$(dirname "$path")")")"
+		[ "$type" ] && type="[${S_D}${type^^}${S_R}]"
+
+		# Mostrar acción 
+		[ "${default,,}" = "y" ] && q="(Y/n)?" || q="(y/N))?"
+		[ "$info" ] && echo
+		echo -en "${C_Y}${info}\n${S_R}[${S_B}$naction${S_R}] ${type} ${action}${S_R} $q "
+
+		# Preguntar si instalar
+		case "$yes" in
+			allyes) 	q="y"; echo	"$q"					;;
+			default) 	q="$default"; echo "$q"				;;
+			*)	 		read q; q="${q,,}"; q="${q:0:1}"	;;
+		esac	
+
+		# Ejecutar acción	
+		[ "$q" != "n" ] && [ "$q" != "y" ] && q="$default"
+		if [ "${q,,}" != "n" ]; then
+			bash "$path"
+		fi
+	done
+}
+
+
+
+#=== FUNCIÓN ======================================================================
+# NOMBRE: expand_actions
+# DESCRIPCIÓN: tomar acciones sin expandir, expandirlas y guardarlas en el array de acciones
+#	1-10,12 -> actions=1 2 3 4 5 6 7 8 9 10 12
+#   all 	-> actions=1 2 3 4 5 6 ... n
+#   bash 	-> actions=3 4 5 (todas las acciones con "bash" en la descripción)
+#
+# PARÁMETROS
+#	$1	acciones sin expandir
+#
+# VARIABLES GLOBALES ESCRITAS
+#	actions_sel[]
+#===================================================================================
+function expand_actions() {
+	local actions="$1"
+	unset actions_sel		# Acciones seleccionadas (global)
+
+	if [ ! "${actions,,}" ]; then
+		actions_sel=$(seq -s" " 1 "$nscripts")
+	else
+		local IFS=$'\n\t '
+		for a in $(echo "$actions" | tr "," " "); do
+			# Es texto 
+			if echo "$a" | grep "[a-zA-Z]" &>/dev/null; then
+				actions_sel="${actions_sel} $(list_actions all | 
+sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" | tail -n +2 | grep $([ "$a" = "${a,,}" ]&& echo -i) "$a" | sed 's/^ *\[\|\]//g' | cut -f1 -d" " | tr $'\n' " ")"				
+			# Es un rango
+			elif echo "$a" | grep -E "[0-9]"*-"[0-9]" &>/dev/null; then
+				actions_sel="${actions_sel} $(eval echo {$(echo $a|sed "s/-/../")})"
+			# Es un número 
+			elif [ "$a" -eq 0 ] &>/dev/null; [ $? -le 1 ]; then
+				actions_sel="${actions_sel} $a"
+			fi
+		done
+	fi
+
+	# Convertir actions_sel en array y descartar números no válidos
+	local IFS=" "
+	for a in $actions_sel; do
+		[ "$a" -ge 1 ] && [ "$a" -le "$nscripts" ] && actions_sel[$a]="true"
+	done
+	unset actions_sel[0]
+}
+
+
+
+
+#=== FUNCIÓN ======================================================================
+# NOMBRE: load_scripts
+# DESCRIPCIÓN: cargar todos los scripts install.sh encontrados y poblar los arrays scripts_XXX
+#
+# VARIABLES GLOBALES ESCRITAS
+#	script_paths[]
+#	script_actions[]
+# 	script_infos[]
+#	script_defaults[]
+#	nscripts
+#===================================================================================
+function load_scripts() {
+	local IFS=$'\n\t'
+	local naction=1
+	local scripts_paths="$(find "$base_dir" -maxdepth 2 -type f -name install.sh | sort -n)"
+
+	for script in $scripts_paths; do
+		local head="$(head -10 "$script")"
+		# Obtener campo ACTION:
+		local action="$(echo "$head" | grep "#[[:blank:]]*ACTION:" | sed 's/#[[:blank:]]*ACTION:[[:blank:]]*//')"
+		[ ! "$action" ] && continue
+		# Obtener campo INFO:
+		local info="$(echo "$head" | grep "#[[:blank:]]*INFO:" | sed 's/#[[:blank:]]*INFO:[[:blank:]]*//')"
+		# Obtener campo DEFAULT:
+		local default="$(echo "$head" | grep "#[[:blank:]]*DEFAULT:" | sed 's/#[[:blank:]]*DEFAULT:[[:blank:]]*//')"
+		default="${default:0:1}"; [ "$default" != "n" ] && default="y"
+
+		script_paths[$naction]="$script"
+		script_actions[$naction]="$action"
+		script_infos[$naction]="$info"
+		script_defaults[$naction]="$default"
+
+		naction=$((naction+1))
+	done
+
+	nscripts=${#script_paths[*]}
+}
+
+
+
+#=== FUNCIÓN ======================================================================
+# NOMBRE: check_os_version
+# DESCRIPCIÓN: comprobar si la distro actual es compatible con este script de instalación
+#
+# CÓDIGOS DE SALIDA
+#	0	ES compatible con Debian 10/11/12 
+#	1	NO es compatible 
+#===================================================================================
+function check_os_version() {
+	cat /etc/*release | grep -iq debian || return 1 
+	cat /etc/*release | egrep -iq "buster|stretch|bookworm" || return 1 
+	return 0
+}
+
+
+#=== FUNCIÓN ======================================================================
+# NOMBRE: error_info
+# DESCRIPCIÓN: mostrar mensaje de error y salir si se suministra código de salida
+#
+# PARÁMETROS
+#	$1		Mensaje a mostrar
+#	[$2]	Código de salida
+#===================================================================================
+function error_info() {
+	local msg="$1"
+	local code="$2" 
+	echo -e "$msg" 1>&2
+	[ "$code" ] && [ "$code" -ne 0 ] &>/dev/null && exit $code
+}
+
+
+
+
+#=== FUNCIÓN ======================================================================
+# NOMBRE: main
+# DESCRIPCIÓN: punto de inicio de la instalación
+#===================================================================================
+function main() {
+	# LEER PARÁMETROS
+	while getopts ":hlyda:" o; do
+		case "$o" in
+		h)	help="true" 		;;
+		l)	list="true"			;;
+		y)	yes="allyes"		;;
+		d)	yes="default"		;;
+		a)	actions="$OPTARG"	;;	
+		esac
+	done
+	
+	# MODO AYUDA
+	if [ "$help" ]; then 
+		help
+		exit 0
+	fi
+
+	# COMPROBACIONES
+	if [ ! "$list" ]; then
+		# Comprobar privilegios de root
+		[ "$(id -u)" -ne 0 ] && error_info "Administrative privileges needed" 1
+
+		# Comprobar versión de Debian
+		if ! check_os_version; then		
+			echo "Parece que no estás ejecutando una distro compatible con Debian"
+			echo "Algunas acciones pueden fallar. Cruza los dedos y pulsa enter..."
+			read
+		fi
+	fi
+
+	# CARGAR SCRIPTS
+	load_scripts
+	[ "$nscripts" -eq 0 ] && error_info "No scripts found in ${base_dir}!" 1
+	
+	# EXPANDIR ACCIONES
+	expand_actions "$actions" 
+	[ ${#actions_sel[*]} -eq 0 ] && error_info "No actions to exec!" 1
+
+
+	# SOLO LISTAR ACCIONES
+	if [ "$list" ]; then
+		list_actions
+	
+	# EJECUTAR ACCIONES
+	else
+		stderr_red
+		[ "${#actions_sel[*]}" -gt 1 ] && list_actions
+		exec_actions
+	fi
+	echo
+}
+
+main "$@"
