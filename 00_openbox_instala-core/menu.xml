@@ -394,7 +394,7 @@
 			</item>	
         </menu>
 
-        <menu id="help" label="Help" icon="/usr/share/icons/openbox-menu/help.png">
+        <menu id="help" label="Ayuda" icon="/usr/share/icons/openbox-menu/help.png">
         	<separator label="AYUDA" />
 	        <item label="Debian-Openbox Script GitHub" icon="/usr/share/icons/openbox-menu/github.png">
 	            <action name="Execute">
@@ -403,14 +403,14 @@
 	                </command>
 	            </action>
 	        </item>	
-	        <item label="Welcome tips" icon="/usr/share/icons/openbox-menu/tip.png">
+	        <item label="Bienvenida..." icon="/usr/share/icons/openbox-menu/tip.png">
 	            <action name="Execute">
 	                <command>
 	                    welcome
 	                </command>
 	            </action>
 	        </item>	
-	        <item label="Shortcuts keys" icon="/usr/share/icons/openbox-menu/shortcut.png">
+	        <item label="Tecla rápidas" icon="/usr/share/icons/openbox-menu/shortcut.png">
 	            <action name="Execute">
 	                <command>
 	                    yad --text-info --window-icon=keyboard --button="Close" --borders=20 --title="Shortcuts and mouse bindings" --width=700 --height=700 --fontname="Monospace" --filename="/usr/share/doc/openbox/help/shortcuts.txt"
@@ -420,21 +420,21 @@
 			
 	        <separator label="DEBIAN GNU/LINUX" />
 
-	        <item label="Debian Documentatcion" icon="/usr/share/icons/openbox-menu/debian.png">
+	        <item label="Documentación Debian" icon="/usr/share/icons/openbox-menu/debian.png">
 	            <action name="Execute">
 	                <command>
 	                    x-www-browser "https://www.debian.org/doc"
 	                </command>
 	            </action>
 	        </item>	
-	        <item label="Debian Handbook" icon="/usr/share/icons/openbox-menu/debian.png">
+	        <item label="Manual Debian" icon="/usr/share/icons/openbox-menu/debian.png">
 	            <action name="Execute">
 	                <command>
 	                    x-www-browser "https://www.debian-handbook.info/browse/stable"
 	                </command>
 	            </action>
 	        </item>		
-	        <item label="Debian Reference" icon="/usr/share/icons/openbox-menu/debian.png">
+	        <item label="Referencia Debian" icon="/usr/share/icons/openbox-menu/debian.png">
 	            <action name="Execute">
 	                <command>
 	                    x-www-browser "https://www.debian.org/doc/manuals/debian-reference/"
