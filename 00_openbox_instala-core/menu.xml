@@ -396,10 +396,10 @@
 
         <menu id="help" label="Ayuda" icon="/usr/share/icons/openbox-menu/help.png">
         	<separator label="AYUDA" />
-	        <item label="Debian-Openbox Script GitHub" icon="/usr/share/icons/openbox-menu/github.png">
+	        <item label="Debian-Openbox Script" icon="/usr/share/icons/openbox-menu/github.png">
 	            <action name="Execute">
 	                <command>
-	                    x-www-browser "https://github.com/leomarcov/debian-openbox#readme"
+	                    x-www-browser "https://github.com/facilitadortic/posinstala"
 	                </command>
 	            </action>
 	        </item>	
