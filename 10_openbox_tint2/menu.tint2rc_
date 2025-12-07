@@ -96,7 +96,7 @@ execp_tooltip =
 execp_lclick_command = x-file-manager 
 
 execp = new
-execp_command = echo "Editor de Textos"
+execp_command = echo "Editor de Texto"
 execp_interval = 0
 execp_background_id = 2
 execp_font = Droid Sans 11

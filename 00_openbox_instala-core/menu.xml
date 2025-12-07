@@ -22,21 +22,21 @@
                 </command>
             </action>
         </item>
-        <item label="Web Browser" icon="/usr/share/icons/openbox-menu/web-browser.png">
+        <item label="Navegador Web" icon="/usr/share/icons/openbox-menu/web-browser.png">
             <action name="Execute">
                 <command>
                     x-www-browser
                 </command>
             </action>
         </item>
-        <item label="File Manager" icon="/usr/share/icons/openbox-menu/file-manager.png">
+        <item label="Administrador de Archivos" icon="/usr/share/icons/openbox-menu/file-manager.png">
             <action name="Execute">
                 <command>
                     x-file-manager
                 </command>
             </action>
         </item>
-        <item label="Text Editor" icon="/usr/share/icons/openbox-menu/text-editor.png">
+        <item label="Editor de Texto" icon="/usr/share/icons/openbox-menu/text-editor.png">
             <action name="Execute">
                 <command>
                     x-text-editor
