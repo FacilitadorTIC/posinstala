@@ -241,19 +241,19 @@
                     </action>
                 </item>	  	  
                 <separator/>		        		
-                <item label="Reload shortcuts" icon="/usr/share/icons/openbox-menu/restart.png">
+                <item label="Recargar atajos" icon="/usr/share/icons/openbox-menu/restart.png">
                     <action name="Reconfigure"/>
                 </item>                          
         	</menu>
 	            
-            <item label="GTK Appearance" icon="/usr/share/icons/openbox-menu/themes.png">>
+            <item label="Apariencia GTK" icon="/usr/share/icons/openbox-menu/themes.png">>
                 <action name="Execute">
                     <command>
                         lxappearance
                     </command>
                 </action>
             </item>
-            <item label="Font Configuration" icon="/usr/share/icons/openbox-menu/fonts.png">
+            <item label="Configurar Tipografías" icon="/usr/share/icons/openbox-menu/fonts.png">
                 <action name="Execute">
                     <command>
                         x-text-editor ~/.config/fontconfig/fonts.conf
@@ -282,7 +282,7 @@
 
         	<separator label="PREFERENCIAS DEL SISTEMA"/>
 
-            <item label="Synaptic Package Manager" icon="/usr/share/icons/openbox-menu/package.png">
+            <item label="Administrador de Paquetes Synaptic" icon="/usr/share/icons/openbox-menu/package.png">
                 <action name="Execute">
                     <command>
                         synaptic-pkexec
